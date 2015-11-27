@@ -63,9 +63,9 @@ trait Parser [E, +T] {
   def parseAll (reader: Reader[E]): ParseResult[T] = apply(reader) match {
     case InterimSuccess(r, n, bf) if n.pos < bf.next.pos                      => ParseFailure(List(bf.failMessage))
     case InterimSuccess(r, _, _)                                              => ParseSuccess(r)
-    case PseudoSuccess(es, n, bf) if ! es.contains(bf) && n.pos < bf.next.pos => ParseFailure((bf :: es).map(_.failMessage))
-    case PseudoSuccess(es, _, _)                                              => ParseFailure(es.map(_.failMessage))
-    case InterimFailure(fail, errors)                                         => ParseFailure((fail :: errors).map(_.failMessage))
+    case PseudoSuccess(es, n, bf) if ! es.contains(bf) && n.pos < bf.next.pos => ParseFailure((bf :: es).map(_.failMessage).sortWith(_.pos < _.pos))
+    case PseudoSuccess(es, _, _)                                              => ParseFailure(es.map(_.failMessage).sortWith(_.pos < _.pos))
+    case InterimFailure(fail, errors)                                         => ParseFailure((fail :: errors).map(_.failMessage).sortWith(_.pos < _.pos))
   }
 
   def ^^ [U] (f: T => U): Parser[E, U] = map(f)

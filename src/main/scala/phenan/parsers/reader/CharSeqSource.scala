@@ -2,7 +2,7 @@ package phenan.parsers.reader
 
 import scala.collection.mutable.ArrayBuffer
 
-class CharSeqSource(source: CharSequence) {
+class CharSeqSource (source: CharSequence) {
   def at (offset: Int) = source.charAt(offset)
 
   def atEnd (offset: Int) = offset >= source.length

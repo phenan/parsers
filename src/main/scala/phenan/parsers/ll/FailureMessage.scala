@@ -19,7 +19,10 @@ case class FailureMessage (expected: String, found: String, pos: Position) {
   * @tparam E 構文解析の入力列の要素の型
   */
 case class FailureBuilder[E] (expected: String, find: Reader[E] => String, priority: Int) {
-  def build (in: Reader[E]): FailureMessage = FailureMessage(expected, find(in), in.pos)
+  def build (in: Reader[E]): FailureMessage = {
+    if (in.atEnd) FailureMessage(expected, "end of input", in.pos)
+    else FailureMessage(expected, find(in), in.pos)
+  }
 
   def < (that: FailureBuilder[E]): Boolean = priority < that.priority
   def > (that: FailureBuilder[E]) = priority > that.priority
